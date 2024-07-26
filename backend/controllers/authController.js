@@ -8,12 +8,15 @@ const sendSmsOtp = require('../services/smsService');
 
 exports.signup = async (req, res) => {
     const { name, email, password, mobile, dateOfBirth } = req.body;
+    
+    const trimedName = name.trim();
+    
     try{
         let user = await User.findone({ email });
         if(user){
             return res.status(400).json({ msg: 'User already exists' });
         }
-        user = new User({ name, email, password, mobile, dateOfBirth });
+        user = new User({ trimedName, email, password, mobile, dateOfBirth });
         
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt)
